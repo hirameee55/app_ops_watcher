@@ -46,6 +46,14 @@ class _MyAppState extends State<MyApp> {
                   await _watcher.startWatching(AppOpsType.systemAlertWindow);
                 },
               ),
+              const SizedBox(height: 10),
+              OutlinedButton(
+                child: const Text('pictureInPicture'),
+                onPressed: () async {
+                  await _watcher.checkOp(AppOpsType.pictureInPicture);
+                  await _watcher.startWatching(AppOpsType.pictureInPicture);
+                },
+              ),
             ],
           ),
         ),

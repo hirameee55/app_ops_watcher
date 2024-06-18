@@ -13,6 +13,11 @@ enum class AppOpsType(val typeName: String, val ops: String, val action: String)
         "systemAlertWindow",
         AppOpsManager.OPSTR_SYSTEM_ALERT_WINDOW,
         Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+    ),
+    PICTURE_IN_PICTURE_SETTINGS(
+        "pictureInPicture",
+        AppOpsManager.OPSTR_PICTURE_IN_PICTURE,
+        "android.settings.PICTURE_IN_PICTURE_SETTINGS",
     );
 
     companion object {
