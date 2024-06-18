@@ -18,6 +18,11 @@ enum class AppOpsType(val typeName: String, val ops: String, val action: String)
         "pictureInPicture",
         AppOpsManager.OPSTR_PICTURE_IN_PICTURE,
         "android.settings.PICTURE_IN_PICTURE_SETTINGS",
+    ),
+    WRITE_SETTINGS(
+        "writeSettings",
+        AppOpsManager.OPSTR_WRITE_SETTINGS,
+        Settings.ACTION_MANAGE_WRITE_SETTINGS,
     );
 
     companion object {
