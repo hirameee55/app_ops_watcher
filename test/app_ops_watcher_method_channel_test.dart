@@ -1,27 +1,39 @@
-import 'package:flutter/services.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:app_ops_watcher/app_ops_type.dart';
 import 'package:app_ops_watcher/app_ops_watcher_method_channel.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-
   MethodChannelAppOpsWatcher platform = MethodChannelAppOpsWatcher();
-  const MethodChannel channel = MethodChannel('app_ops_watcher');
 
   setUp(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
-      channel,
-      (MethodCall methodCall) async {
-        return '42';
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      platform.methodChannel,
+      (methodCall) async {
+        switch (methodCall.method) {
+          case 'checkOp':
+            return 0;
+
+          case 'startWatching':
+            return 1;
+        }
+
+        return null;
       },
     );
   });
 
   tearDown(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(channel, null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(platform.methodChannel, null);
   });
 
-  test('getPlatformVersion', () async {
-    expect(await platform.getPlatformVersion(), '42');
+  test('checkOp', () async {
+    expect(await platform.checkOp(AppOpsType.systemAlertWindow), 0);
+  });
+
+  test('startWatching', () async {
+    expect(await platform.startWatching(AppOpsType.systemAlertWindow, null), 1);
   });
 }

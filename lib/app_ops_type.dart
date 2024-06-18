@@ -1,0 +1,4 @@
+enum AppOpsType {
+  usageStats,
+  systemAlertWindow,
+}

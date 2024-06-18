@@ -1,35 +1,48 @@
 package com.hirameee.app_ops_watcher
 
-import androidx.annotation.NonNull
-
 import io.flutter.embedding.engine.plugins.FlutterPlugin
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.plugin.common.MethodChannel.Result
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 
-/** AppOpsWatcherPlugin */
-class AppOpsWatcherPlugin: FlutterPlugin, MethodCallHandler {
-  /// The MethodChannel that will the communication between Flutter and native Android
-  ///
-  /// This local reference serves to register the plugin with the Flutter Engine and unregister it
-  /// when the Flutter Engine is detached from the Activity
-  private lateinit var channel : MethodChannel
+class AppOpsWatcherPlugin : FlutterPlugin, ActivityAware {
 
-  override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "app_ops_watcher")
-    channel.setMethodCallHandler(this)
-  }
-
-  override fun onMethodCall(call: MethodCall, result: Result) {
-    if (call.method == "getPlatformVersion") {
-      result.success("Android ${android.os.Build.VERSION.RELEASE}")
-    } else {
-      result.notImplemented()
+    companion object{
+        const val TAG = "AppOpsWatcher"
     }
-  }
 
-  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-    channel.setMethodCallHandler(null)
-  }
+    private var methodCallHandler: MethodCallHandlerImpl
+    private var appOpsWatcher: AppOpsWatcher = AppOpsWatcher()
+    private var intentSender: IntentSender = IntentSender()
+
+    init {
+        methodCallHandler = MethodCallHandlerImpl(appOpsWatcher, intentSender)
+    }
+
+    override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        appOpsWatcher.init(flutterPluginBinding.applicationContext)
+        methodCallHandler.startListening(flutterPluginBinding.binaryMessenger)
+    }
+
+    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        appOpsWatcher.delete()
+        methodCallHandler.stopListening()
+    }
+
+    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+        appOpsWatcher.setActivity(binding.activity)
+        intentSender.setActivity(binding.activity)
+    }
+
+    override fun onDetachedFromActivity() {
+        appOpsWatcher.setActivity(null)
+        intentSender.setActivity(null)
+    }
+
+    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+        onAttachedToActivity(binding)
+    }
+
+    override fun onDetachedFromActivityForConfigChanges() {
+        onDetachedFromActivity()
+    }
 }
