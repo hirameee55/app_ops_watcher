@@ -14,7 +14,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final _appOpsManagerPlugin = AppOpsWatcher();
+  final _watcher = AppOpsWatcher();
 
   @override
   void initState() {
@@ -34,26 +34,16 @@ class _MyAppState extends State<MyApp> {
               OutlinedButton(
                 child: const Text('usageStats'),
                 onPressed: () async {
-                  // final a =
-                  //     await _appOpsManagerPlugin.checkOp(AppOpsType.usageStats);
-                  // print('checkOp $a');
-
-                  final b = await _appOpsManagerPlugin
-                      .startWatching(AppOpsType.usageStats);
-                  print('startWatching $b');
+                  await _watcher.checkOp(AppOpsType.usageStats);
+                  await _watcher.startWatching(AppOpsType.usageStats);
                 },
               ),
               const SizedBox(height: 10),
               OutlinedButton(
                 child: const Text('systemAlertWindow'),
                 onPressed: () async {
-                  // final a = await _appOpsManagerPlugin
-                  //     .checkOp(AppOpsType.systemAlertWindow);
-                  // print('checkOp $a');
-
-                  final b = await _appOpsManagerPlugin
-                      .startWatching(AppOpsType.systemAlertWindow);
-                  print('startWatching $b');
+                  await _watcher.checkOp(AppOpsType.systemAlertWindow);
+                  await _watcher.startWatching(AppOpsType.systemAlertWindow);
                 },
               ),
             ],

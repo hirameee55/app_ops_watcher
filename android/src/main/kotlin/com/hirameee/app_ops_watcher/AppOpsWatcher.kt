@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AppOpsManager
 import android.content.Context
 import android.os.Build
+import android.util.Log
 
 interface AppOpsCallback {
     fun onChange()
@@ -31,9 +32,17 @@ class AppOpsWatcher {
     fun checkOp(ops: String): Int? {
         activity?.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                return appOpsManager.unsafeCheckOp(ops, android.os.Process.myUid(), it.packageName)
+                return appOpsManager.unsafeCheckOpNoThrow(
+                    ops,
+                    android.os.Process.myUid(),
+                    it.packageName
+                )
             } else {
-                return appOpsManager.checkOp(ops, android.os.Process.myUid(), it.packageName)
+                return appOpsManager.checkOpNoThrow(
+                    ops,
+                    android.os.Process.myUid(),
+                    it.packageName
+                )
             }
         }
         return null

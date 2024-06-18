@@ -1,7 +1,5 @@
 package com.hirameee.app_ops_watcher
 
-import android.provider.Settings
-import android.util.Log
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -46,7 +44,6 @@ class MethodCallHandlerImpl(
                 intentSender.send(appOpsType.action)
                 appOpsWatcher.startWatchingMode(appOpsType.ops, object : AppOpsCallback {
                     override fun onChange() {
-                        Log.d("###", "onChange")
                         intentSender.sendMyApp(myClass)
 
                         val state = appOpsWatcher.checkOp(appOpsType.ops)
